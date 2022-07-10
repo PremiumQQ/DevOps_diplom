@@ -124,6 +124,10 @@ user.password = 'netology'
 user.password_confirmation = 'netology'
 user.save!
 ```
+```
+P.S. В последующей настройке использовал свой SSL сертификат, бесплатно выписанный reg.ru, т.к. браузеры не доверяют тестовым сертификатам letsencrypt.
+```
+
 Для регистрации Gitlab Runner, нужно выполнить следующую команду на ВМ runner:
 
 ```
