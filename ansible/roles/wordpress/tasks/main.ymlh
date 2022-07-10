@@ -1,0 +1,96 @@
+---
+- name: Add nginx stable repository from PPA
+  ansible.builtin.apt_repository:
+    repo: ppa:nginx/stable
+  ignore_errors: yes
+
+- name: Install components
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - apache2
+    - php
+    - php-curl
+    - php-gd
+    - php-intl
+    - php-mbstring
+    - php-soap
+    - php-xml
+    - php-zip
+    - php-xmlrpc
+    - php-mysql
+    - php-cli
+    - git
+
+- name: Upload tar.gz Wordpress latest 
+  get_url:
+    url: "http://wordpress.org/latest.tar.gz"
+    dest: "/home/ubuntu/latest.tar.gz"
+    mode: 0755
+
+- name: Unarchive
+  unarchive:
+    copy: false
+    src: "/home/ubuntu/latest.tar.gz"
+    dest: "/home/ubuntu/"
+
+- name: Remove latest.tar.gz
+  command: rm /home/ubuntu/latest.tar.gz
+  args:
+    removes: /home/ubuntu/latest.tar.gz
+
+- name: Copy files
+  command: cp -r /home/ubuntu/wordpress/{{ item }} /var/www/html
+  with_items:
+   - "index.php"
+   - "license.txt"
+   - "readme.html"
+   - "wp-activate.php"
+   - "wp-admin"
+   - "wp-blog-header.php"
+   - "wp-comments-post.php"
+   - "wp-config-sample.php"
+   - "wp-content"
+   - "wp-cron.php"
+   - "wp-includes"
+   - "wp-links-opml.php"
+   - "wp-load.php"
+   - "wp-login.php"
+   - "wp-mail.php"
+   - "wp-settings.php"
+   - "wp-signup.php"
+   - "wp-trackback.php"
+   - "xmlrpc.php"
+
+- name: chown
+  command: chown -R www-data:www-data /var/www/html
+  args:
+    chdir: /home/ubuntu
+
+- name: chmod
+  command: chmod -R 755 /var/www/html
+  args:
+    chdir: /home/ubuntu
+  notify:
+    - apache restart
+
+- name: Remove index.html
+  command: rm /var/www/html/index.html
+  args:
+    removes: /var/www/html/index.html
+
+- name: Remove latest
+  command: rm -r /home/ubuntu/wordpress
+  args:
+    removes: /home/ubuntu/wordpress
+
+- name: Add Private SSH key
+  template:
+    src=templates/id_rsa
+    dest=/home/ubuntu/.ssh/id_rsa
+
+- name: Add Pablic SSH key
+  template:
+    src=templates/id_rsa.pub
+    dest=/home/ubuntu/.ssh/id_rsa.pub

@@ -1,0 +1,81 @@
+---
+- name: Update system
+  apt: update_cache=yes
+
+- name: Install Python
+  apt:
+    name=python-simplejson
+    state=latest
+
+- name: Install Nginx Web Servev
+  apt:
+    name=nginx
+    state=latest
+
+- name: Remove default nginx config
+  file: name=/etc/nginx/sites-enabled/default state=absent
+
+- name: Install system nginx config
+  template:
+    src: templates/nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Add redirect config
+  template:
+    src: templates/redirect
+    dest: /etc/nginx/sites-enabled/redirect
+
+- name: Reload nginx
+  service: name=nginx state=restarted
+
+- name: install letsencrypt
+  apt: name=letsencrypt state=latest
+
+- name: create letsencrypt directory
+  file: name=/var/www/letsencrypt state=directory
+
+- name: Create letsencrypt certificate front
+  shell: letsencrypt certonly -n --webroot --staging -w /var/www/letsencrypt -m stazy@stazy.ru --agree-tos -d stazy.ru
+  args:
+    creates: /etc/letsencrypt/live/stazy.ru
+
+- name: Create letsencrypt certificate gitlab
+  shell: letsencrypt certonly -n --webroot --staging -w /var/www/letsencrypt -m stazy@stazy.ru --agree-tos -d gitlab.stazy.ru
+  args:
+    creates: /etc/letsencrypt/live/gitlab.stazy.ru
+
+- name: Create letsencrypt certificate grafana
+  shell: letsencrypt certonly -n --webroot --staging -w /var/www/letsencrypt -m stazy@stazy.ru --agree-tos -d grafana.stazy.ru
+  args:
+    creates: /etc/letsencrypt/live/stazy.zhukops.ru
+
+- name: Create letsencrypt certificate prometheus
+  shell: letsencrypt certonly -n --webroot --staging -w /var/www/letsencrypt -m stazy@stazy.ru --agree-tos -d prometheus.stazy.ru
+  args:
+    creates: /etc/letsencrypt/live/prometheus.stazy.ru
+
+- name: Create letsencrypt certificate alertmanager
+  shell: letsencrypt certonly -n --webroot --staging -w /var/www/letsencrypt -m stazy@stazy.ru --agree-tos -d alertmanager.stazy.ru
+  args:
+    creates: /etc/letsencrypt/live/alertmanager.stazy.ru
+
+- name: Generate dhparams
+  shell: openssl dhparam -out /etc/nginx/dhparams.pem 2048
+  args:
+    creates: /etc/nginx/dhparams.pem
+
+- name: Install reverse proxy config
+  template:
+    src: templates/proxy
+    dest: /etc/nginx/sites-enabled/proxy
+
+- name: Reload nginx
+  service: name=nginx state=restarted
+
+
+- name: Add letsencrypt cronjob for cert renewal
+  cron:
+    name: letsencrypt_renewal
+    special_time: weekly
+    job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m stazy@stazy.ru --agree-tos -d stazy.ru && service nginx reload
+

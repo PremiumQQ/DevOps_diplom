@@ -1,0 +1,50 @@
+---
+diplom:
+  hosts:
+    nginx:
+      ansible_host: stazy.ru
+      ansible_connection: ssh
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /root/.ssh/id_rsa  
+
+    mysql-master:
+      ansible_host: 192.168.10.102
+      ansible_connection: ssh
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /root/.ssh/id_rsa
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q ubuntu@stazy.ru"'
+
+    mysql-slave:
+      ansible_host: 192.168.10.103
+      ansible_connection: ssh
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /root/.ssh/id_rsa
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q ubuntu@stazy.ru"'
+
+    wordpress:
+      ansible_host: 192.168.10.104
+      ansible_connection: ssh
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /root/.ssh/id_rsa
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q ubuntu@stazy.ru"'
+
+    gitlab:
+      ansible_host: 192.168.10.105
+      ansible_connection: ssh
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /root/.ssh/id_rsa
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q ubuntu@stazy.ru"'
+
+    runner:
+      ansible_host: 192.168.10.106
+      ansible_connection: ssh
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /root/.ssh/id_rsa
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q ubuntu@stazy.ru"'
+
+    grafana:
+      ansible_host: 192.168.10.107
+      ansible_connection: ssh
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /root/.ssh/id_rsa
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q ubuntu@stazy.ru"'

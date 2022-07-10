@@ -1,0 +1,10 @@
+---
+- hosts: wordpress
+  become:
+    true
+  roles:
+   - wordpress
+   - exporter
+  environment:
+    http_proxy: http://192.168.10.101:8118/
+    https_proxy: http://192.168.10.101:8118/

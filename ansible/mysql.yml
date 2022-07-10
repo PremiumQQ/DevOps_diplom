@@ -1,0 +1,20 @@
+---
+- hosts: mysql-master
+  become:
+    true
+  roles:
+   - mysql-master
+   - exporter
+  environment:
+    http_proxy: http://192.168.10.101:8118/
+    https_proxy: http://192.168.10.101:8118/
+
+- hosts: mysql-slave
+  become:
+    true
+  roles:
+   - mysql-slave
+   - exporter
+  environment:
+    http_proxy: http://192.168.10.101:8118/
+    https_proxy: http://192.168.10.101:8118/

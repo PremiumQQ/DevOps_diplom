@@ -1,0 +1,51 @@
+---
+- name: Update system
+  apt: update_cache=yes
+
+- name: Install mysql
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - mysql-server
+    - python-pymysql
+    - python3-pymysql
+    - python-apt
+    - python3-apt
+
+- name: Add MySQL config mysql.cnf
+  template:
+    src=templates/mysqld.cnf
+    dest=/etc/mysql/mysql.conf.d/mysqld.cnf
+
+- name: Reload mysql
+  service: name=mysql.service state=restarted
+
+- name: Set password for root user
+  mysql_user:
+    name: "root"
+    password: "secret"
+    priv: '*.*:ALL,GRANT'
+    host: 'localhost'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+
+- name: Add config .my.cnf
+  template:
+    src=templates/.my.cnf
+    dest=/root/.my.cnf
+
+- name: Reload mysql
+  service: name=mysql.service state=restarted
+
+- name: Replica slave
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - CHANGE MASTER TO MASTER_HOST = '192.168.10.102',  MASTER_USER = 'repl', MASTER_PASSWORD = 'secret', MASTE>  changed_when: False
+
+- name: start MySQL slave process
+  mysql_replication:
+    mode: startreplica
+
+- name: Reload mysql
+  service: name=mysql.service state=restarted

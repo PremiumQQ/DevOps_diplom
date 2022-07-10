@@ -1,0 +1,42 @@
+---
+- name: Upgrade system
+  apt: update_cache=yes
+
+- name: Add repository
+  shell: curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash -
+  args:
+    warn: no
+
+- name: Update apt packages
+  become: true
+  apt:
+    update_cache: yes
+
+- name: Install Gitlab
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - gitlab-ce
+
+- name: Add Gitlab config
+  template:
+    src=templates/gitlab.rb
+    dest=/etc/gitlab/gitlab.rb
+
+- name: Install locales
+  locale_gen: name={{ item }} state=present
+  with_items:
+    - en_US.UTF-8
+
+#- name: export LC_CTYPE=en_US.UTF-8
+#  command: export LC_CTYPE=en_US.UTF-8
+
+#- name: export LC_ALL=en_US.UTF-8
+#  command: export LC_ALL=en_US.UTF-8
+
+- name: Gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
+
+- name: Gitlab-ctl start
+  command: gitlab-ctl start

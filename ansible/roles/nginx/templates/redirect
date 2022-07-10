@@ -1,0 +1,68 @@
+server_tokens off;
+
+server {
+    listen 80;
+    server_name stazy.ru;
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://stazy.ru$request_uri? permanent;
+    }
+}
+
+server {
+    listen 80;
+    server_name gitlab.stazy.ru;
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://gitlab.stazy.ru$request_uri? permanent;
+    }
+}
+server {
+    listen 80;
+    server_name grafana.stazy.ru;
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://grafana.stazy.ru$request_uri? permanent;
+    }
+}
+server {
+    listen 80;
+    server_name prometheus.stazy.ru;
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://prometheus.stazy.ru$request_uri? permanent;
+    }
+}
+server {
+    listen 80;
+    server_name alertmanager.stazy.ru;
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://alertmanager.stazy.ru$request_uri? permanent;
+    }
+}

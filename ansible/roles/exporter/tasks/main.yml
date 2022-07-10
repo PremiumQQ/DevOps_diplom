@@ -1,0 +1,6 @@
+---
+- name: Updade system
+  apt: update_cache=yes
+
+- name: Install prometheus-node-exporter
+  action: apt pkg=prometheus-node-exporter state=present update_cache=true

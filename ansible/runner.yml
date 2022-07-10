@@ -1,0 +1,9 @@
+---
+- hosts: runner
+  become:
+    true
+  roles:
+   - exporter 
+  environment:
+    http_proxy: http://192.168.10.101:8118/
+    https_proxy: http://192.168.10.101:8118/

@@ -1,0 +1,21 @@
+---
+- name: grafana-start
+  systemd:
+    name: grafana-server
+    enabled: yes
+    state: started
+
+- name: prometheus
+  systemd:
+    name: prometheus
+    enabled: yes
+    state: restarted
+
+- name: prometheus-alertmanager
+  systemd:
+    name: prometheus-alertmanager
+    enabled: yes
+    state: restarted
+
+
+
