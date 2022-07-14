@@ -155,10 +155,10 @@ pages:
   - chmod 644 ~/.ssh/known_hosts
   script:
     - echo "Deploying application..." 
-    - ssh -o StrictHostKeyChecking=no $SSH_USER@$VM_IPADDRESS sudo chown $SSH_USER /var/www/wordpress/ -R
-    - rsync -vz -e "ssh -o StrictHostKeyChecking=no" ./* $SSH_USER@$VM_IPADDRESS:/var/www/wordpress/
-    - ssh -o StrictHostKeyChecking=no $SSH_USER@$VM_IPADDRESS rm -rf /var/www/wordpress/.git
-    - ssh -o StrictHostKeyChecking=no $SSH_USER@$VM_IPADDRESS sudo chown www-data /var/www/wordpress/ -R
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$VM_IPADDRESS sudo chown $SSH_USER /var/www/html/ -R
+    - rsync -vz -e "ssh -o StrictHostKeyChecking=no" ./* $SSH_USER@$VM_IPADDRESS:/var/www/html/
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$VM_IPADDRESS rm -rf /var/www/html/.git
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$VM_IPADDRESS sudo chown www-data /var/www/html/ -R
   artifacts:
     paths:
     - public
@@ -175,6 +175,13 @@ SSH_USER (Имя пользователя ВМ с Wordpress, в нашем сл�
 
 Для корректной работы скрипты, нужно добавить публичный SSH ключ на ВМ с Wordpress, по пути ```/home/ubuntu/.ssh/authorized_keys```
 
+Сборка выполнилась успешно:
+
+![pipeline](/img/pipeline1.png)
+
+![pipeline2](/img/pipeline2.png)
+
+Теперь при commit в репозитории GitLab изменения будут отправляться на сервер c который пропишем в variables.
 ## Установка кластера Grafana, Prometheus и Alert Manager.
 
 Роль по установке Grafana, Prometheus и Alert Manager и настройке находится в папке ansible/grafana.yml.
